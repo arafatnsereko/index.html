@@ -1,76 +1,1320 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101114">
-  <title>Pulse — Beat Maker</title>
-  <style>
-    :root{color-scheme:dark;--bg:#101114;--panel:#191a20;--panel2:#202127;--line:#30313a;--muted:#92939f;--text:#f7f6f2;--lime:#c8f169;--pink:#ff6b8a;--blue:#8e9bff;--orange:#ffb86b}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -25%,#292b35 0,transparent 58%),var(--bg);color:var(--text);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center;padding:38px 20px 56px}
-    button,input{font:inherit}button{color:inherit}.app{width:min(100%,1000px)}.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}.brand{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:800;letter-spacing:-.04em}.brand-mark{width:36px;height:36px;border-radius:12px;background:var(--lime);color:#171912;display:grid;place-items:center;font-size:20px}.tag{color:var(--muted);font-size:12px;letter-spacing:.13em;text-transform:uppercase}
-    .intro{margin-bottom:26px}.eyebrow{color:var(--lime);font-size:11px;font-weight:750;letter-spacing:.18em;text-transform:uppercase}.intro h1{font-size:clamp(34px,6vw,52px);line-height:1.04;letter-spacing:-.055em;margin:8px 0 9px}.intro p{color:var(--muted);margin:0;max-width:560px}
-    .transport,.sequencer,.bottom-grid>section{background:linear-gradient(145deg,#1d1e24,#17181d);border:1px solid var(--line);border-radius:18px}.transport{padding:18px;display:flex;align-items:center;gap:16px;margin-bottom:16px}.play{width:54px;height:54px;border:0;border-radius:16px;background:var(--lime);color:#161910;display:grid;place-items:center;cursor:pointer;flex:none;transition:transform .15s,filter .15s}.play:hover{transform:translateY(-2px);filter:brightness(1.06)}.play svg{width:22px;height:22px;fill:currentColor}.transport-info{flex:1;min-width:120px}.transport-title{font-weight:750}.transport-sub{color:var(--muted);font-size:12px;margin-top:3px}.bpm{display:flex;align-items:center;gap:10px;padding:8px 10px 8px 13px;border:1px solid var(--line);background:#141519;border-radius:13px}.bpm label{color:var(--muted);font-size:10px;letter-spacing:.12em;font-weight:800}.bpm input{width:48px;background:none;border:0;outline:0;color:var(--text);font-size:20px;font-weight:750;text-align:center}.bpm-arrows{display:flex;flex-direction:column;gap:2px}.bpm-arrows button{padding:0 3px;border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;line-height:1}.bpm-arrows button:hover{color:var(--lime)}.control-btn{height:42px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:#222329;color:#d9d9df;cursor:pointer;font-size:13px;font-weight:650}.control-btn:hover{background:#2b2c33}.volume{display:flex;align-items:center;gap:8px;color:var(--muted)}.volume svg{width:17px;height:17px}.volume input{width:82px;accent-color:var(--lime)}
-    .sequencer{padding:20px;overflow:hidden}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:19px}.section-title{font-size:14px;font-weight:750}.section-caption{font-size:11px;color:var(--muted);margin-top:3px}.legend{display:flex;gap:14px;color:var(--muted);font-size:11px}.legend span{display:flex;align-items:center;gap:6px}.dot{width:8px;height:8px;border-radius:3px;background:var(--lime)}.dot.inactive{background:#3a3b43}.steps-head,.track{display:grid;grid-template-columns:120px repeat(16,minmax(18px,1fr));gap:7px;align-items:center}.steps-head{margin-bottom:10px}.step-number{text-align:center;color:#6d6e78;font-size:10px;height:16px}.step-number.beat{color:#c3c4cb;font-weight:700}.track{padding:9px 0}.track+.track{border-top:1px solid #292a31}.track-label{display:flex;align-items:center;gap:9px;min-width:0}.instrument-icon{width:31px;height:31px;border-radius:10px;background:#26272e;display:grid;place-items:center;font-size:14px;flex:none}.instrument-name{font-size:12px;font-weight:700;white-space:nowrap}.instrument-kind{font-size:10px;color:var(--muted);margin-top:1px}.step{height:34px;width:100%;padding:0;border:1px solid #33343d;border-radius:8px;background:#25262d;cursor:pointer;transition:background .1s,transform .1s,border-color .1s;position:relative}.step:hover{border-color:#777984;transform:translateY(-1px)}.step:nth-child(4n+2){margin-left:0}.step.beat-boundary{margin-left:4px}.step.active{background:var(--track-color);border-color:var(--track-color);box-shadow:0 3px 12px color-mix(in srgb,var(--track-color) 20%,transparent)}.step.active::after{content:"";position:absolute;inset:9px;border-radius:3px;background:rgba(15,16,18,.28)}.step.playing{outline:2px solid #fff;outline-offset:2px;z-index:1}.track{--track-color:var(--lime)}.track[data-track="snare"]{--track-color:var(--pink)}.track[data-track="hat"]{--track-color:var(--blue)}.track[data-track="clap"]{--track-color:var(--orange)}
-    .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.bottom-grid>section{padding:17px 18px}.panel-heading{font-size:13px;font-weight:750;margin:0 0 12px}.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.pad{min-height:62px;border:1px solid var(--line);border-radius:12px;background:#23242b;cursor:pointer;transition:transform .1s,background .1s}.pad:hover,.pad.hit{transform:scale(.97);background:#303139}.pad strong{display:block;font-size:12px}.pad small{color:var(--muted);font-size:10px}.tips{color:var(--muted);font-size:12px;margin:0;line-height:1.65}.tips b{color:#d8d8dd;font-weight:650}.footer{display:flex;justify-content:space-between;align-items:center;color:#696a74;font-size:11px;margin-top:18px;padding:0 3px}.status{display:flex;align-items:center;gap:7px}.status-light{width:7px;height:7px;border-radius:50%;background:#51525c}.status-light.on{background:var(--lime);box-shadow:0 0 10px #c8f16988}
-    @media(max-width:720px){body{padding:25px 12px}.topbar{margin-bottom:25px}.tag{display:none}.transport{gap:10px;padding:13px}.transport-sub{display:none}.volume{display:none}.control-btn{padding:0 11px}.sequencer{padding:15px 11px}.steps-head,.track{grid-template-columns:78px repeat(16,minmax(12px,1fr));gap:4px}.step{height:29px;border-radius:6px}.step.beat-boundary{margin-left:2px}.instrument-icon{width:25px;height:25px}.instrument-name{font-size:10px}.instrument-kind{font-size:9px}.track-label{gap:5px}.legend{gap:8px}.bottom-grid{grid-template-columns:1fr}.steps-head{margin-bottom:6px}}
-    @media(max-width:420px){.transport{flex-wrap:wrap}.transport-info{min-width:60px}.control-btn{font-size:11px;padding:0 9px}.bpm{gap:6px;padding:7px}.steps-head,.track{grid-template-columns:65px repeat(16,minmax(10px,1fr));gap:3px}.step{height:25px}.instrument-kind{display:none}.instrument-name{font-size:9px}.instrument-icon{width:22px;height:22px;font-size:12px}.sequencer{padding:13px 8px}.step-number{font-size:9px}}
-  </style>
-</head>
-<body>
-  <main class="app">
-    <header class="topbar"><div class="brand"><div class="brand-mark">♫</div><span>pulse</span></div><div class="tag">Your pocket-sized rhythm studio</div></header>
-    <section class="intro"><div class="eyebrow">Make something that moves</div><h1>Find your rhythm.</h1><p>Tap in a groove, hit play, and make it yours. Your next beat is only 16 steps away.</p></section>
-    <section class="transport" aria-label="Beat controls">
-      <button class="play" id="playButton" aria-label="Play beat" title="Play / stop (Space)"><svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-      <div class="transport-info"><div class="transport-title" id="transportTitle">Ready when you are</div><div class="transport-sub" id="transportSub">Press play to hear your beat</div></div>
-      <div class="bpm"><label for="bpmInput">BPM</label><input id="bpmInput" type="number" min="50" max="200" value="110" aria-label="Tempo in beats per minute"><div class="bpm-arrows"><button id="bpmUp" aria-label="Increase tempo">▲</button><button id="bpmDown" aria-label="Decrease tempo">▼</button></div></div>
-      <button class="control-btn" id="clearButton">Clear</button><button class="control-btn" id="randomButton">✦ Random</button>
-      <label class="volume" title="Master volume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg><input id="volumeInput" type="range" min="0" max="100" value="72" aria-label="Master volume"></label>
-    </section>
-    <section class="sequencer" aria-label="16-step drum sequencer"><div class="section-head"><div><div class="section-title">Beat sequencer</div><div class="section-caption">Click a step to switch it on or off</div></div><div class="legend"><span><i class="dot"></i>On</span><span><i class="dot inactive"></i>Off</span></div></div><div class="steps-head" id="stepsHead"><div></div></div><div id="tracks"></div></section>
-    <div class="bottom-grid"><section><h2 class="panel-heading">Quick pads <span style="color:var(--muted);font-weight:500">· play a sound</span></h2><div class="pads" id="pads"></div></section><section><h2 class="panel-heading">Make it yours</h2><p class="tips">Start with the <b>kick</b> on the downbeat, add a <b>snare</b> to the backbeat, then sprinkle in hi-hats. Use <b>Space</b> to play or stop. Turn up the tempo when the groove feels right.</p></section></div>
-    <footer class="footer"><span>Made for late-night ideas and loud speakers.</span><span class="status"><i class="status-light" id="statusLight"></i><span id="statusText">Stopped</span></span></footer>
-  </main>
-<script>
-(() => {
-  const instruments = [
-    {id:'kick',name:'Kick',kind:'Low end',icon:'◉',key:'1',color:'#c8f169',pattern:[0,8]},
-    {id:'snare',name:'Snare',kind:'Backbeat',icon:'▤',key:'2',color:'#ff6b8a',pattern:[4,12]},
-    {id:'hat',name:'Hi-hat',kind:'Timekeeper',icon:'✳',key:'3',color:'#8e9bff',pattern:[0,2,4,6,8,10,12,14]},
-    {id:'clap',name:'Clap',kind:'Accent',icon:'✋',key:'4',color:'#ffb86b',pattern:[12]}
-  ];
-  const steps=16, state=Object.fromEntries(instruments.map(i=>[i.id,new Set(i.pattern)]));
-  const tracks=document.querySelector('#tracks'), head=document.querySelector('#stepsHead');
-  for(let n=0;n<steps;n++){const el=document.createElement('div');el.className=`step-number${n%4===0?' beat':''}`;el.textContent=n%4===0?String(n/4+1):'·';head.append(el)}
-  instruments.forEach(inst=>{
-    const row=document.createElement('div');row.className='track';row.dataset.track=inst.id;
-    const label=document.createElement('div');label.className='track-label';label.innerHTML=`<span class="instrument-icon">${inst.icon}</span><span><span class="instrument-name">${inst.name}</span><span class="instrument-kind">${inst.kind}</span></span>`;row.append(label);
-    for(let n=0;n<steps;n++){const btn=document.createElement('button');btn.className='step';btn.setAttribute('aria-label',`${inst.name}, step ${n+1}`);btn.setAttribute('aria-pressed',state[inst.id].has(n));if(n%4===0)btn.classList.add('beat-boundary');if(state[inst.id].has(n))btn.classList.add('active');btn.addEventListener('click',()=>{if(state[inst.id].has(n)){state[inst.id].delete(n);btn.classList.remove('active');btn.setAttribute('aria-pressed','false')}else{state[inst.id].add(n);btn.classList.add('active');btn.setAttribute('aria-pressed','true')}});row.append(btn)}tracks.append(row);
-  });
-  const pads=document.querySelector('#pads');
-  instruments.forEach(inst=>{const b=document.createElement('button');b.className='pad';b.innerHTML=`<strong>${inst.icon} ${inst.name}</strong><small>Key ${inst.key}</small>`;b.addEventListener('click',()=>{playSound(inst.id);b.classList.add('hit');setTimeout(()=>b.classList.remove('hit'),120)});pads.append(b)});
-  let audio=null,master=null,isPlaying=false,nextStep=0,nextTime=0,timer=null,uiTimer=null;
-  const bpmInput=document.querySelector('#bpmInput'),playButton=document.querySelector('#playButton'),playIcon=document.querySelector('#playIcon');
-  function ensureAudio(){if(!audio){audio=new(window.AudioContext||window.webkitAudioContext)();master=audio.createGain();master.gain.value=Number(document.querySelector('#volumeInput').value)/100;master.connect(audio.destination)}if(audio.state==='suspended')audio.resume();return audio}
-  function toneGain(time,peak,duration){const gain=audio.createGain();gain.connect(master);gain.gain.setValueAtTime(Math.max(.0001,peak),time);gain.gain.exponentialRampToValueAtTime(.0001,time+duration);return gain}
-  function playSound(id,time){ensureAudio();const t=time??audio.currentTime;
-    if(id==='kick'){const osc=audio.createOscillator(),gain=toneGain(t,1,.48);osc.connect(gain);osc.frequency.setValueAtTime(155,t);osc.frequency.exponentialRampToValueAtTime(43,t+.13);gain.gain.setValueAtTime(1,t);gain.gain.exponentialRampToValueAtTime(.0001,t+.48);osc.start(t);osc.stop(t+.5);return}
-    if(id==='hat'){const length=Math.floor(audio.sampleRate*.075),buffer=audio.createBuffer(1,length,audio.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<length;i++)data[i]=Math.random()*2-1;const source=audio.createBufferSource(),filter=audio.createBiquadFilter(),gain=toneGain(t,.23,.065);source.buffer=buffer;filter.type='highpass';filter.frequency.value=7500;source.connect(filter);filter.connect(gain);source.start(t);return}
-    if(id==='snare'||id==='clap'){const length=Math.floor(audio.sampleRate*(id==='clap'?.19:.16)),buffer=audio.createBuffer(1,length,audio.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<length;i++)data[i]=Math.random()*2-1;const source=audio.createBufferSource(),filter=audio.createBiquadFilter(),gain=toneGain(t,id==='clap'?.32:.38,id==='clap'?.18:.14);source.buffer=buffer;filter.type='highpass';filter.frequency.value=id==='clap'?1100:900;source.connect(filter);filter.connect(gain);source.start(t);if(id==='snare'){const osc=audio.createOscillator(),body=toneGain(t,.26,.12);osc.type='triangle';osc.frequency.setValueAtTime(185,t);osc.connect(body);osc.start(t);osc.stop(t+.13)}else{[0,.025,.05].forEach((offset,i)=>{const g=toneGain(t+offset,.18-i*.035,.11);source.connect(g)})}}
-  }
-  function secondsPerStep(){return 60/Math.max(50,Math.min(200,Number(bpmInput.value)||110))/4}
-  function scheduler(){while(nextTime<audio.currentTime+.1){const step=nextStep,time=nextTime;instruments.forEach(inst=>{if(state[inst.id].has(step))playSound(inst.id,time)});scheduleVisual(step,time);nextTime+=secondsPerStep();nextStep=(nextStep+1)%steps}}
-  function scheduleVisual(step,time){const delay=Math.max(0,(time-audio.currentTime)*1000);setTimeout(()=>{document.querySelectorAll('.step.playing').forEach(e=>e.classList.remove('playing'));instruments.forEach((inst,index)=>{const button=tracks.children[index].children[step+1];button.classList.add('playing');setTimeout(()=>button.classList.remove('playing'),Math.max(70,secondsPerStep()*850))})},delay)}
-  function setPlaying(on){if(on){ensureAudio();isPlaying=true;nextStep=0;nextTime=audio.currentTime+.05;timer=setInterval(scheduler,25);document.querySelector('#transportTitle').textContent='Your beat is playing';document.querySelector('#transportSub').textContent=`${Math.round(Number(bpmInput.value)||110)} BPM · 4/4 time`;document.querySelector('#statusText').textContent='Playing';document.querySelector('#statusLight').classList.add('on');playButton.setAttribute('aria-label','Stop beat');playIcon.innerHTML='<path d="M6 6h12v12H6z"/>'}else{isPlaying=false;clearInterval(timer);clearTimeout(uiTimer);document.querySelectorAll('.step.playing').forEach(e=>e.classList.remove('playing'));document.querySelector('#transportTitle').textContent='Ready when you are';document.querySelector('#transportSub').textContent='Press play to hear your beat';document.querySelector('#statusText').textContent='Stopped';document.querySelector('#statusLight').classList.remove('on');playButton.setAttribute('aria-label','Play beat');playIcon.innerHTML='<path d="M8 5v14l11-7z"/>'}}
-  playButton.addEventListener('click',()=>setPlaying(!isPlaying));
-  document.querySelector('#volumeInput').addEventListener('input',e=>{if(master)master.gain.setTargetAtTime(Number(e.target.value)/100,audio.currentTime,.015)});
-  function setBpm(v){bpmInput.value=Math.max(50,Math.min(200,Number(v)||110));if(isPlaying)document.querySelector('#transportSub').textContent=`${bpmInput.value} BPM · 4/4 time`}
-  bpmInput.addEventListener('change',()=>setBpm(bpmInput.value));document.querySelector('#bpmUp').addEventListener('click',()=>setBpm(Number(bpmInput.value)+1));document.querySelector('#bpmDown').addEventListener('click',()=>setBpm(Number(bpmInput.value)-1));
-  document.querySelector('#clearButton').addEventListener('click',()=>{instruments.forEach(inst=>{state[inst.id].clear();[...tracks.children[instruments.indexOf(inst)].querySelectorAll('.step')].forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false')})})});
-  document.querySelector('#randomButton').addEventListener('click',()=>{instruments.forEach((inst,i)=>{state[inst.id].clear();for(let n=0;n<steps;n++){let on=inst.id==='kick'?n%4===0||Math.random()<.2:inst.id==='snare'?n%8===4||Math.random()<.12:inst.id==='hat'?Math.random()<.62:Math.random()<.13;if(on)state[inst.id].add(n)}[...tracks.children[i].querySelectorAll('.step')].forEach((b,n)=>{b.classList.toggle('active',state[inst.id].has(n));b.setAttribute('aria-pressed',state[inst.id].has(n))})})});
-  document.addEventListener('keydown',e=>{if(e.code==='Space'&&!['INPUT','BUTTON'].includes(document.activeElement.tagName)){e.preventDefault();setPlaying(!isPlaying)}if(!e.repeat&&['1','2','3','4'].includes(e.key)){const i=Number(e.key)-1;playSound(instruments[i].id);const b=pads.children[i];b.classList.add('hit');setTimeout(()=>b.classList.remove('hit'),120)}});
-})();
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Pulse — beat maker portfolio and interactive drum sequencer" />
+    <meta name="theme-color" content="#101114" />
+    <title>Pulse | Beat Maker</title>
+    <style>
+      :root {
+        --bg: #0b0d11;
+        --bg-2: #11151b;
+        --panel: rgba(20, 23, 30, 0.9);
+        --panel-strong: #181d25;
+        --line: rgba(255,255,255,0.08);
+        --line-strong: rgba(255,255,255,0.12);
+        --text: #f5f7fb;
+        --muted: #a2a8b5;
+        --lime: #c8f169;
+        --pink: #ff6b8a;
+        --blue: #8ca4ff;
+        --orange: #ffb86b;
+        --shadow: rgba(0, 0, 0, 0.34);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top, rgba(140,164,255,0.12), transparent 20%),
+          radial-gradient(circle at bottom right, rgba(255,107,138,0.12), transparent 25%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      a { color: inherit; text-decoration: none; }
+      img { max-width: 100%; display: block; }
+      button, input { font: inherit; }
+
+      .container {
+        width: min(1100px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(11, 13, 17, 0.72);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 72px;
+        gap: 18px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--lime), #7fe0b0);
+        color: #0d1117;
+        box-shadow: 0 10px 25px rgba(200, 241, 105, 0.28);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .nav-links a:hover { color: var(--text); }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+
+      .hero {
+        padding: 72px 0 40px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        align-items: center;
+        gap: 28px;
+      }
+
+      .eyebrow {
+        color: var(--lime);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.74rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.9rem, 5vw, 5rem);
+        line-height: 0.98;
+        letter-spacing: -0.06em;
+      }
+
+      .hero-copy p {
+        max-width: 580px;
+        margin: 20px 0 24px;
+        color: var(--muted);
+        font-size: 1.06rem;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 46px;
+        padding: 0 18px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .button.primary {
+        background: linear-gradient(135deg, var(--lime), #a5f9d0);
+        color: #0c1014;
+        box-shadow: 0 18px 35px rgba(200, 241, 105, 0.22);
+      }
+
+      .button.secondary {
+        background: rgba(255,255,255,0.02);
+        border-color: var(--line-strong);
+        color: var(--text);
+      }
+
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 28px;
+      }
+
+      .stat {
+        min-width: 120px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 1.5rem;
+        letter-spacing: -0.04em;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .hero-card {
+        background: linear-gradient(180deg, rgba(24,29,37,0.96), rgba(17,21,27,0.96));
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        padding: 18px;
+        box-shadow: 0 28px 80px rgba(0,0,0,0.3);
+      }
+
+      .mini-panel {
+        background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 18px;
+      }
+
+      .wave {
+        display: grid;
+        grid-template-columns: repeat(24, 1fr);
+        align-items: end;
+        gap: 5px;
+        height: 120px;
+        margin-bottom: 18px;
+      }
+
+      .wave span {
+        display: block;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--blue), var(--pink));
+        opacity: 0.9;
+      }
+
+      .hero-card h2 {
+        margin: 0 0 6px;
+        font-size: 0.78rem;
+        color: var(--muted);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .track-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .track-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+      }
+
+      .track-row strong { font-size: 0.96rem; }
+      .track-row span { color: var(--muted); font-size: 0.82rem; }
+      .tag {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.02);
+      }
+
+      .section {
+        padding: 42px 0;
+      }
+
+      .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+
+      .section-heading h3 {
+        margin: 0;
+        font-size: clamp(1.7rem, 3vw, 2.5rem);
+        letter-spacing: -0.05em;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 540px;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        background: linear-gradient(180deg, rgba(25,31,39,0.94), rgba(15,18,23,0.94));
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 18px;
+      }
+
+      .card .icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        font-size: 1.2rem;
+        margin-bottom: 14px;
+      }
+
+      .card h4 {
+        margin: 0 0 8px;
+        font-size: 1.2rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .showcase {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .showcase-item {
+        position: relative;
+        overflow: hidden;
+        min-height: 260px;
+        border-radius: 22px;
+        border: 1px solid var(--line);
+        background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        padding: 18px;
+      }
+
+      .showcase-item:nth-child(1) { background: linear-gradient(135deg, rgba(200,241,105,0.12), rgba(17,21,27,1)); }
+      .showcase-item:nth-child(2) { background: linear-gradient(135deg, rgba(255,107,138,0.12), rgba(17,21,27,1)); }
+      .showcase-item:nth-child(3) { background: linear-gradient(135deg, rgba(140,164,255,0.12), rgba(17,21,27,1)); }
+
+      .showcase-item .label {
+        display: inline-flex;
+        padding: 6px 9px;
+        border-radius: 999px;
+        background: rgba(0,0,0,0.18);
+        border: 1px solid rgba(255,255,255,0.08);
+        font-size: 0.72rem;
+        color: var(--text);
+      }
+
+      .showcase-item h4 {
+        margin: 18px 0 10px;
+        font-size: 1.5rem;
+        letter-spacing: -0.05em;
+      }
+
+      .showcase-item p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .visual-bars {
+        display: flex;
+        align-items: end;
+        gap: 5px;
+        height: 70px;
+        margin-top: 18px;
+      }
+
+      .visual-bars span {
+        display: block;
+        flex: 1;
+        border-radius: 999px 999px 0 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.12));
+      }
+
+      .studio {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .sequencer-panel {
+        background: linear-gradient(180deg, rgba(25,31,39,0.95), rgba(15,18,23,0.95));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 18px;
+      }
+
+      .sequencer-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .sequencer-head h4 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--pink);
+        box-shadow: 0 0 0 0 rgba(255,107,138,0.7);
+        animation: pulse 1.8s infinite;
+      }
+
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(255,107,138,0.7); }
+        70% { box-shadow: 0 0 0 12px rgba(255,107,138,0); }
+        100% { box-shadow: 0 0 0 0 rgba(255,107,138,0); }
+      }
+
+      .transport {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+      }
+
+      .play-button {
+        width: 48px;
+        height: 48px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--lime), #a8f1d5);
+        color: #0a0f14;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+
+      .transport-copy {
+        flex: 1;
+      }
+
+      .transport-copy strong {
+        display: block;
+        font-size: 0.92rem;
+      }
+
+      .transport-copy span {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .tempo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+      }
+
+      .tempo input {
+        width: 60px;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .tempo input:focus { outline: none; }
+
+      .tempo button {
+        width: 26px;
+        height: 26px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255,255,255,0.02);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .step-grid {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .step-head,
+      .track-row-seq {
+        display: grid;
+        grid-template-columns: 90px repeat(16, minmax(0, 1fr));
+        gap: 8px;
+        align-items: center;
+      }
+
+      .track-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .instrument-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        font-weight: 800;
+        color: #0a0d11;
+      }
+
+      .step-number {
+        display: grid;
+        place-items: center;
+        font-size: 0.66rem;
+        color: rgba(255,255,255,0.5);
+      }
+
+      .step {
+        width: 100%;
+        aspect-ratio: 1;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255,255,255,0.02);
+        cursor: pointer;
+        transition: all 0.12s ease;
+      }
+
+      .step.on {
+        background: linear-gradient(180deg, rgba(200,241,105,0.9), rgba(140,164,255,0.78));
+        border-color: rgba(255,255,255,0.12);
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+      }
+
+      .step.playing {
+        transform: scale(1.04);
+        box-shadow: 0 0 18px rgba(255,255,255,0.18);
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .mini-button {
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 9px 12px;
+        cursor: pointer;
+      }
+
+      .info-item {
+        background: linear-gradient(180deg, rgba(27,32,39,0.95), rgba(15,18,23,0.95));
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 22px 20px;
+      }
+
+      .info-item h4 {
+        margin: 0 0 12px;
+        font-size: 1.1rem;
+      }
+
+      .info-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .info-row:last-child { border-bottom: none; }
+
+      .info-row span { color: var(--muted); }
+
+      .contact-wrap {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 18px;
+      }
+
+      .contact-card,
+      .form-card {
+        background: linear-gradient(180deg, rgba(25,31,39,0.94), rgba(15,18,23,0.94));
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 20px;
+      }
+
+      .contact-card h4,
+      .form-card h4 {
+        margin: 0 0 10px;
+        font-size: 1.2rem;
+      }
+
+      .contact-card p,
+      .form-card p {
+        margin: 0 0 16px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .contact-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.02);
+      }
+
+      .contact-item strong { font-size: 0.9rem; }
+      .contact-item span { color: var(--muted); }
+
+      form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label {
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .field input,
+      .field textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.02);
+        color: var(--text);
+        padding: 12px 14px;
+        resize: vertical;
+      }
+
+      .field input:focus,
+      .field textarea:focus {
+        outline: 2px solid rgba(140,164,255,0.35);
+        border-color: rgba(140,164,255,0.4);
+      }
+
+      footer {
+        padding: 28px 0 52px;
+        color: var(--muted);
+      }
+
+      .footer-wrap {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+      }
+
+      @media (max-width: 920px) {
+        .hero-grid,
+        .studio,
+        .contact-wrap {
+          grid-template-columns: 1fr;
+        }
+
+        .cards,
+        .showcase {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .nav-links {
+          display: none;
+        }
+
+        .section-heading {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .step-head,
+        .track-row-seq {
+          grid-template-columns: 70px repeat(16, minmax(18px, 1fr));
+        }
+
+        .transport {
+          flex-wrap: wrap;
+        }
+
+        .tempo {
+          margin-left: auto;
+        }
+
+        .footer-wrap {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a href="#top" class="brand" aria-label="Pulse home">
+          <span class="brand-mark">♫</span>
+          <span>pulse</span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#services">Services</a>
+          <a href="#work">Work</a>
+          <a href="#studio">Studio</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <span class="chip">Live sessions · 24/7</span>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">Make something that moves</div>
+            <h1>Find your rhythm.</h1>
+            <p>
+              I craft hard-hitting instrumentals, melodic loops, and club-ready production that gives your records personality,
+              momentum, and that late-night energy people remember.
+            </p>
+            <div class="actions">
+              <a class="button primary" href="#studio">Try the beat lab</a>
+              <a class="button secondary" href="#contact">Book a session</a>
+            </div>
+            <div class="stats" aria-label="Key stats">
+              <div class="stat">
+                <strong>120+</strong>
+                <span>beats built</span>
+              </div>
+              <div class="stat">
+                <strong>8 yrs</strong>
+                <span>sound design</span>
+              </div>
+              <div class="stat">
+                <strong>4.9/5</strong>
+                <span>client rating</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="hero-card" aria-label="Featured beat summary">
+            <div class="mini-panel">
+              <div class="wave" aria-hidden="true">
+                <span style="height: 34%"></span>
+                <span style="height: 52%"></span>
+                <span style="height: 64%"></span>
+                <span style="height: 44%"></span>
+                <span style="height: 74%"></span>
+                <span style="height: 59%"></span>
+                <span style="height: 88%"></span>
+                <span style="height: 46%"></span>
+                <span style="height: 72%"></span>
+                <span style="height: 55%"></span>
+                <span style="height: 80%"></span>
+                <span style="height: 35%"></span>
+                <span style="height: 68%"></span>
+                <span style="height: 58%"></span>
+                <span style="height: 92%"></span>
+                <span style="height: 48%"></span>
+                <span style="height: 66%"></span>
+                <span style="height: 54%"></span>
+                <span style="height: 83%"></span>
+                <span style="height: 45%"></span>
+                <span style="height: 72%"></span>
+                <span style="height: 60%"></span>
+                <span style="height: 90%"></span>
+                <span style="height: 52%"></span>
+              </div>
+
+              <h2>Current focus</h2>
+              <div class="track-list">
+                <div class="track-row">
+                  <div>
+                    <strong>Midnight Run</strong><br>
+                    <span>Trap / drill / 140 BPM</span>
+                  </div>
+                  <span class="tag">Hot</span>
+                </div>
+                <div class="track-row">
+                  <div>
+                    <strong>Velvet Echo</strong><br>
+                    <span>R&amp;B / future funk / 98 BPM</span>
+                  </div>
+                  <span class="tag">New</span>
+                </div>
+                <div class="track-row">
+                  <div>
+                    <strong>Neon Drift</strong><br>
+                    <span>Electronic / cinematic / 110 BPM</span>
+                  </div>
+                  <span class="tag">Draft</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="services" class="section">
+        <div class="container">
+          <div class="section-heading">
+            <h3>Built for artists, brands, and movement</h3>
+            <p>Whether you need a striking intro, a full-length instrumental, or a custom vibe for a campaign, every beat is designed to feel intentional.</p>
+          </div>
+
+          <div class="cards">
+            <article class="card">
+              <div class="icon">▣</div>
+              <h4>Original beat production</h4>
+              <p>Custom drums, melody layers, and arrangement choices tailored to your sound, genre, and emotional target.</p>
+            </article>
+            <article class="card">
+              <div class="icon">✦</div>
+              <h4>Sound design</h4>
+              <p>Texture-rich synths, punchy percussion, and atmospheric details built to make your records feel premium and immersive.</p>
+            </article>
+            <article class="card">
+              <div class="icon">◉</div>
+              <h4>Creative direction</h4>
+              <p>From early demos to final masters, the sonic arc stays cohesive, memorable, and aligned with your vision.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="work" class="section">
+        <div class="container">
+          <div class="section-heading">
+            <h3>Recent work</h3>
+            <p>Exploring rhythm-driven storytelling across trap, electronic, and melodic forms.</p>
+          </div>
+
+          <div class="showcase">
+            <article class="showcase-item">
+              <span class="label">Trap</span>
+              <h4>Night Shift</h4>
+              <p>Dark synth textures, tight snare motion, and a rolling low-end designed for cinematic verses and late-night energy.</p>
+              <div class="visual-bars" aria-hidden="true">
+                <span style="height: 46%"></span>
+                <span style="height: 65%"></span>
+                <span style="height: 80%"></span>
+                <span style="height: 52%"></span>
+                <span style="height: 62%"></span>
+                <span style="height: 90%"></span>
+                <span style="height: 70%"></span>
+                <span style="height: 44%"></span>
+                <span style="height: 88%"></span>
+                <span style="height: 58%"></span>
+              </div>
+            </article>
+
+            <article class="showcase-item">
+              <span class="label">R&amp;B</span>
+              <h4>Velvet Echo</h4>
+              <p>Warm pads, soft percussion, and spaced-out melodic phrases crafted to keep the lead vocal floating in focus.</p>
+              <div class="visual-bars" aria-hidden="true">
+                <span style="height: 34%"></span>
+                <span style="height: 58%"></span>
+                <span style="height: 54%"></span>
+                <span style="height: 84%"></span>
+                <span style="height: 60%"></span>
+                <span style="height: 76%"></span>
+                <span style="height: 49%"></span>
+                <span style="height: 69%"></span>
+                <span style="height: 83%"></span>
+                <span style="height: 55%"></span>
+              </div>
+            </article>
+
+            <article class="showcase-item">
+              <span class="label">Electronic</span>
+              <h4>Neon Drift</h4>
+              <p>Movement-first harmonic layering and rhythmic push that feels both modern and immersive for visual-led storytelling.</p>
+              <div class="visual-bars" aria-hidden="true">
+                <span style="height: 40%"></span>
+                <span style="height: 74%"></span>
+                <span style="height: 63%"></span>
+                <span style="height: 92%"></span>
+                <span style="height: 48%"></span>
+                <span style="height: 68%"></span>
+                <span style="height: 58%"></span>
+                <span style="height: 86%"></span>
+                <span style="height: 51%"></span>
+                <span style="height: 72%"></span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="studio" class="section">
+        <div class="container studio">
+          <div class="info-item">
+            <h4>Studio profile</h4>
+            <div class="info-list">
+              <div class="info-row"><span>Focus</span><strong>Beat architecture</strong></div>
+              <div class="info-row"><span>Workflow</span><strong>Concept → drums → melody → mix</strong></div>
+              <div class="info-row"><span>Tools</span><strong>DAW, synths, sampling</strong></div>
+              <div class="info-row"><span>Delivery</span><strong>WAV + stems + revisions</strong></div>
+            </div>
+          </div>
+
+          <div class="sequencer-panel" aria-label="Beat sequencer">
+            <div class="sequencer-head">
+              <h4>Beat lab</h4>
+              <span class="status-badge"><span class="pulse-dot"></span> Ready to groove</span>
+            </div>
+
+            <div class="transport">
+              <button class="play-button" id="playButton" aria-label="Play beat">▶</button>
+              <div class="transport-copy">
+                <strong id="transportTitle">Ready when you are</strong>
+                <span id="transportSub">Press play to hear your beat</span>
+              </div>
+              <div class="tempo">
+                <button id="bpmDown" aria-label="Decrease BPM">−</button>
+                <input id="bpmInput" type="number" min="50" max="200" value="110" aria-label="Tempo in beats per minute" />
+                <button id="bpmUp" aria-label="Increase BPM">+</button>
+              </div>
+            </div>
+
+            <div class="step-grid" aria-label="Beat sequencer grid">
+              <div class="step-head" id="stepsHead"></div>
+              <div id="tracks"></div>
+            </div>
+
+            <div class="controls">
+              <button class="mini-button" id="clearButton">Clear</button>
+              <button class="mini-button" id="randomButton">Random</button>
+              <label class="mini-button" for="volumeInput" style="display:inline-flex; align-items:center; gap:8px;">
+                Volume <input id="volumeInput" type="range" min="0" max="100" value="72" aria-label="Master volume" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section">
+        <div class="container contact-wrap">
+          <div class="contact-card">
+            <h4>Let’s build the next energy spike</h4>
+            <p>Available for custom instrumental work, creative collaborations, and campaign sound design.</p>
+            <div class="contact-list">
+              <div class="contact-item"><strong>Email</strong><span>hello@pulsebeats.studio</span></div>
+              <div class="contact-item"><strong>Instagram</strong><span>@pulseforge</span></div>
+              <div class="contact-item"><strong>Location</strong><span>Remote / worldwide</span></div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <h4>Start a project</h4>
+            <p>Tell me what you want the track to feel like, and I’ll build a custom direction around it.</p>
+            <form>
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" placeholder="Your name" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" />
+              </div>
+              <div class="field">
+                <label for="message">Project brief</label>
+                <textarea id="message" name="message" rows="5" placeholder="Tell me about the mood, genre, and timeline."></textarea>
+              </div>
+              <button type="submit" class="button primary">Send inquiry</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-wrap">
+        <div>© 2026 Pulse — Beat maker and sonic architect</div>
+        <div>Made for movement, mood, and momentum.</div>
+      </div>
+    </footer>
+
+    <script>
+      (() => {
+        const instruments = [
+          { id: 'kick', name: 'Kick', kind: 'Low end', icon: '◉', key: '1', color: '#c8f169', pattern: [0, 4, 8, 12] },
+          { id: 'snare', name: 'Snare', kind: 'Backbeat', icon: '▤', key: '2', color: '#ff6b8a', pattern: [4, 12] },
+          { id: 'hat', name: 'Hi-hat', kind: 'Timekeeper', icon: '✳', key: '3', color: '#8ca4ff', pattern: [0, 2, 4, 6, 8, 10, 12, 14] },
+          { id: 'clap', name: 'Clap', kind: 'Accent', icon: '✋', key: '4', color: '#ffb86b', pattern: [12] }
+        ];
+
+        const steps = 16;
+        const state = Object.fromEntries(instruments.map((inst) => [inst.id, new Set(inst.pattern)]));
+        const tracks = document.querySelector('#tracks');
+        const head = document.querySelector('#stepsHead');
+
+        for (let n = 0; n < steps; n++) {
+          const el = document.createElement('div');
+          el.className = `step-number${n % 4 === 0 ? ' beat' : ''}`;
+          el.textContent = n % 4 === 0 ? String(Math.floor(n / 4) + 1) : '·';
+          head.appendChild(el);
+        }
+
+        instruments.forEach((inst) => {
+          const row = document.createElement('div');
+          row.className = 'track-row-seq';
+          row.dataset.track = inst.id;
+
+          const label = document.createElement('div');
+          label.className = 'track-label';
+          label.innerHTML = `<span class="instrument-icon" style="background:${inst.color}">${inst.icon}</span><span>${inst.name}</span>`;
+          row.appendChild(label);
+
+          for (let n = 0; n < steps; n++) {
+            const btn = document.createElement('button');
+            btn.className = 'step' + (state[inst.id].has(n) ? ' on' : '');
+            btn.type = 'button';
+            btn.setAttribute('aria-label', `${inst.name}, step ${n + 1}`);
+            btn.setAttribute('aria-pressed', state[inst.id].has(n) ? 'true' : 'false');
+            btn.addEventListener('click', () => {
+              if (state[inst.id].has(n)) {
+                state[inst.id].delete(n);
+                btn.classList.remove('on');
+                btn.setAttribute('aria-pressed', 'false');
+              } else {
+                state[inst.id].add(n);
+                btn.classList.add('on');
+                btn.setAttribute('aria-pressed', 'true');
+              }
+            });
+            row.appendChild(btn);
+          }
+
+          tracks.appendChild(row);
+        });
+
+        let audioCtx = null;
+        let masterGain = null;
+        let isPlaying = false;
+        let nextStep = 0;
+        let nextTime = 0;
+        let schedulerTimer = null;
+
+        const bpmInput = document.querySelector('#bpmInput');
+        const playButton = document.querySelector('#playButton');
+        const volumeInput = document.querySelector('#volumeInput');
+        const transportTitle = document.querySelector('#transportTitle');
+        const transportSub = document.querySelector('#transportSub');
+
+        function ensureAudio() {
+          if (!audioCtx) {
+            const AudioCtor = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioCtor();
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = Number(volumeInput.value) / 100;
+            masterGain.connect(audioCtx.destination);
+          }
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function toneGain(time, peak, duration) {
+          const gain = audioCtx.createGain();
+          gain.connect(masterGain);
+          gain.gain.setValueAtTime(Math.max(0.0001, peak), time);
+          gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+          return gain;
+        }
+
+        function playSound(id, time) {
+          ensureAudio();
+          const t = time ?? audioCtx.currentTime;
+
+          if (id === 'kick') {
+            const osc = audioCtx.createOscillator();
+            const gain = toneGain(t, 1.1, 0.4);
+            osc.connect(gain);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(152, t);
+            osc.frequency.exponentialRampToValueAtTime(48, t + 0.14);
+            osc.start(t);
+            osc.stop(t + 0.18);
+          }
+
+          if (id === 'snare') {
+            const length = Math.floor(audioCtx.sampleRate * 0.16);
+            const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < length; i++) {
+              data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const gain = toneGain(t, 0.8, 0.12);
+            noise.connect(gain);
+            noise.start(t);
+            noise.stop(t + 0.12);
+          }
+
+          if (id === 'hat') {
+            const length = Math.floor(audioCtx.sampleRate * 0.06);
+            const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < length; i++) {
+              data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 1.8);
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 5500;
+            const gain = toneGain(t, 0.45, 0.06);
+            noise.connect(filter);
+            filter.connect(gain);
+            noise.start(t);
+            noise.stop(t + 0.06);
+          }
+
+          if (id === 'clap') {
+            const length = Math.floor(audioCtx.sampleRate * 0.18);
+            const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0)
+            for (let i = 0; i < length; i++) {
+              data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.1);
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const gain = toneGain(t, 0.7, 0.14);
+            noise.connect(gain);
+            noise.start(t);
+            noise.stop(t + 0.14);
+          }
+        }
+
+        const stepButtons = () => Array.from(document.querySelectorAll('.step'));
+
+        function secondsPerStep() {
+          const bpm = Math.min(200, Math.max(50, Number(bpmInput.value) || 110));
+          return 60 / bpm / 4;
+        }
+
+        function scheduleVisual(step) {
+          const buttons = stepButtons();
+          buttons.forEach((button) => button.classList.remove('playing'));
+          buttons.forEach((button) => {
+            const row = button.closest('.track-row-seq');
+            if (!row) return;
+            if (row.dataset.track === 'kick' && step === 0) {
+              button.classList.add('playing');
+            }
+          });
+
+          const active = document.querySelectorAll('.step.on');
+          active.forEach((button) => {
+            const row = button.closest('.track-row-seq');
+            if (!row) return;
+            const index = Array.from(row.children).indexOf(button);
+            if (index - 1 === step) button.classList.add('playing');
+          });
+        }
+
+        function scheduler() {
+          while (nextTime < audioCtx.currentTime + 0.1) {
+            const step = nextStep;
+            const time = nextTime;
+            instruments.forEach((inst) => {
+              if (state[inst.id].has(step)) playSound(inst.id, time);
+            });
+            scheduleVisual(step);
+            nextStep = (nextStep + 1) % steps;
+            nextTime += secondsPerStep();
+          }
+        }
+
+        function setPlaying(on) {
+          ensureAudio();
+          isPlaying = on;
+          playButton.textContent = on ? '❚❚' : '▶';
+          transportTitle.textContent = on ? 'Playing your groove' : 'Ready when you are';
+          transportSub.textContent = on ? `${bpmInput.value} BPM · 4/4 time` : 'Press play to hear your beat';
+
+          if (on) {
+            nextStep = 0;
+            nextTime = audioCtx.currentTime + 0.05;
+            scheduler();
+            schedulerTimer = setInterval(scheduler, 25);
+          } else {
+            clearInterval(schedulerTimer);
+            document.querySelectorAll('.step').forEach((step) => step.classList.remove('playing'));
+          }
+        }
+
+        playButton.addEventListener('click', () => setPlaying(!isPlaying));
+
+        volumeInput.addEventListener('input', () => {
+          if (masterGain) masterGain.gain.setTargetAtTime(Number(volumeInput.value) / 100, audioCtx.currentTime, 0.02);
+        });
+
+        function setBpm(value) {
+          const bpm = Math.min(200, Math.max(50, Number(value) || 110));
+          bpmInput.value = bpm;
+          if (isPlaying) transportSub.textContent = `${bpm} BPM · 4/4 time`;
+        }
+
+        bpmInput.addEventListener('change', () => setBpm(bpmInput.value));
+        document.querySelector('#bpmUp').addEventListener('click', () => setBpm(Number(bpmInput.value) + 1));
+        document.querySelector('#bpmDown').addEventListener('click', () => setBpm(Number(bpmInput.value) - 1));
+
+        document.querySelector('#clearButton').addEventListener('click', () => {
+          instruments.forEach((inst) => {
+            state[inst.id].clear();
+            const row = document.querySelector(`[data-track="${inst.id}"]`);
+            row.querySelectorAll('.step').forEach((button) => {
+              button.classList.remove('on');
+              button.setAttribute('aria-pressed', 'false');
+            });
+          });
+        });
+
+        document.querySelector('#randomButton').addEventListener('click', () => {
+          instruments.forEach((inst) => {
+            state[inst.id].clear();
+            for (let n = 0; n < steps; n++) {
+              let shouldPlay = false;
+              if (inst.id === 'kick') shouldPlay = n % 4 === 0 || Math.random() < 0.22;
+              if (inst.id === 'snare') shouldPlay = (n + 2) % 8 === 0 || Math.random() < 0.18;
+              if (inst.id === 'hat') shouldPlay = Math.random() < 0.6;
+              if (inst.id === 'clap') shouldPlay = n === 12 || Math.random() < 0.12;
+              if (shouldPlay) state[inst.id].add(n);
+            }
+            const row = document.querySelector(`[data-track="${inst.id}"]`);
+            row.querySelectorAll('.step').forEach((button, index) => {
+              const active = state[inst.id].has(index);
+              button.classList.toggle('on', active);
+              button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+          });
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.code === 'Space' && !['INPUT', 'TEXTAREA', 'BUTTON'].includes(document.activeElement.tagName)) {
+            event.preventDefault();
+            setPlaying(!isPlaying);
+          }
+
+          if (!event.repeat && ['1', '2', '3', '4'].includes(event.key)) {
+            const idx = Number(event.key) - 1;
+            const inst = instruments[idx];
+            if (!inst) return;
+            const row = document.querySelector(`[data-track="${inst.id}"]`);
+            row.querySelectorAll('.step').forEach((button) => button.classList.toggle('on'));
+            row.querySelectorAll('.step').forEach((button, stepIndex) => {
+              if (button.classList.contains('on')) state[inst.id].add(stepIndex);
+              else state[inst.id].delete(stepIndex);
+            });
+          }
+        });
+
+        document.querySelector('form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const button = event.target.querySelector('button[type="submit"]');
+          button.textContent = 'Inquiry sent';
+          button.disabled = true;
+          setTimeout(() => {
+            button.textContent = 'Send inquiry';
+            button.disabled = false;
+            event.target.reset();
+          }, 1800);
+        });
+      })();
+    </script>
+  </body>
 </html>
